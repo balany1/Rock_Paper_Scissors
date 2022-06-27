@@ -3,17 +3,17 @@ import random
 
 class Rock_Paper_Scissors:
 
-    def __init__(self,choice_list):
+    def __init__(self):
         #self.computer_choice = random.choice(self.choice_list)
         pass
 
-    def get_computer_choice():
+    def get_computer_choice(self):
         choice_list = ['Rock','Paper','Scissors']
         computer_choice = random.choice(choice_list).lower()
         return computer_choice
 
 
-    def get_user_choice():
+    def get_user_choice(self):
         while True:
 
             user_choice = input('Please choose Rock, Paper or Scissors:').lower()
@@ -22,7 +22,7 @@ class Rock_Paper_Scissors:
             else:
                 print('Please choose one of the options selected')
 
-    def get_winner(computer_choice,user_choice):
+    def get_winner(self,computer_choice,user_choice):
         if computer_choice == user_choice:
            print('It\'s a tie')
         elif computer_choice == 'rock':
@@ -40,13 +40,14 @@ class Rock_Paper_Scissors:
                 print('You won! Scissors beats Paper')
             else:
                 print('You lose! Paper beats Rock')
-              
-            
-    
 
+def play():
+    game = Rock_Paper_Scissors()
+    computer_choice = game.get_computer_choice()
+    user_choice = game.get_user_choice()
+    game.get_winner(computer_choice,user_choice)
 
-    if __name__ ==  '__main__':
-        choice_list = ['Rock','Paper','Scissors','Nothing']
-        computer_choice = get_computer_choice()
-        user_choice = get_user_choice()
-        get_winner(computer_choice,user_choice)
+if __name__ ==  '__main__':
+    choice_list = ['Rock','Paper','Scissors','Nothing']
+        
+    play()
