@@ -4,9 +4,10 @@ from keras.models import load_model
 import numpy as np
 import time
 from time import sleep
-model = load_model('keras_model.h5')
-cap = cv2.VideoCapture(0)
-data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
+#model = load_model('keras_model.h5')
+#cap = cv2.VideoCapture(0)
+#data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
+
 
 from ast import If
 import random
@@ -15,43 +16,49 @@ class Rock_Paper_Scissors:
 
     def __init__(self):
         #self.computer_choice = random.choice(self.choice_list)
+        self.model = load_model('keras_model.h5')
+        self.cap = cv2.VideoCapture(0)
+        self.data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
         self.user_score = 0
         self.computer_score = 0
         pass
 
-
-    def open_camera(self):
-    
+    def start_camera(self):
         while True: 
-            ret, frame = cap.read()
+            ret, frame = self.cap.read()
             resized_frame = cv2.resize(frame, (224, 224), interpolation = cv2.INTER_AREA)
             image_np = np.array(resized_frame)
             normalized_image = (image_np.astype(np.float32) / 127.0) - 1 # Normalize the image
-            data[0] = normalized_image
-            self.prediction = model.predict(data)
+            self.data[0] = normalized_image
+            self.prediction = self.model.predict(self.data)
             cv2.imshow('frame', frame)
+            self.start_game()
+             # Press q to close the window
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            self.stop_video()
 
-            while self.user_score <3 and self.computer_score <3:
-                self.timer()
-                print(self.prediction)
-                user_choice = self.get_prediction()
-                print(user_choice)
-                computer_choice = self.get_computer_choice()
-                print(computer_choice)
-                self.get_winner(computer_choice,user_choice)
-                if self.user_score == 3: 
-                    print('You have won! What a hero')
-                    exit
-                elif self.computer_score == 3:
-                    print('You lost the game! Doofus')
-                    exit
 
-            # Press q to close the window
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
-            
+    def start_game(self):
+    
+        while self.user_score <3 and self.computer_score <3:
+            self.timer()
+            #print(self.prediction)
+            user_choice = self.get_prediction()
+            print(user_choice)
+            computer_choice = self.get_computer_choice()
+            print(computer_choice)
+            self.get_winner(computer_choice,user_choice)
+            if self.user_score == 3: 
+                print('You have won! What a hero')
+                exit()
+            elif self.computer_score == 3:
+                print('You lost the game! Doofus')
+                exit()
+
+    def stop_video(self):
+        
         # After the loop release the cap object
-        cap.release()
+        self.cap.release()
         # Destroy all the windows
         cv2.destroyAllWindows()
         
@@ -62,6 +69,14 @@ class Rock_Paper_Scissors:
             sleep(1)
             countdown_timer -= 1
         print('GO!')
+        ret, frame = self.cap.read()
+        resized_frame = cv2.resize(frame, (224, 224), interpolation = cv2.INTER_AREA)
+        image_np = np.array(resized_frame)
+        normalized_image = (image_np.astype(np.float32) / 127.0) - 1 # Normalize the image
+        self.data[0] = normalized_image
+        self.prediction = self.model.predict(self.data)
+        self.get_prediction()
+    
 
     def get_prediction(self):
         if self.prediction[0][0] > 0.5:
@@ -83,7 +98,7 @@ class Rock_Paper_Scissors:
         return computer_choice
 
     def get_winner(self,computer_choice,user_choice):
-        #while self.user_score <=3 and self.computer_score <=3:
+        
     
             if computer_choice == user_choice:
                 print('It\'s a tie')
@@ -115,7 +130,7 @@ class Rock_Paper_Scissors:
     def play():
         
         game = Rock_Paper_Scissors()
-        game.open_camera()
+        game.start_camera()
        
 
 if __name__ ==  '__main__':
